@@ -7,14 +7,12 @@ function Formulario() {
     const [enteredEmail, setEnteredEmail] = useState(' ');
     const [enteredSexo, setEnteredSexo] = useState(' ');
     const [enteredMensaje, setEnteredMensaje] = useState('');
-    const [enteredTerminos, setEnteredTerminos] = useState('');
 
     const [nombreIncorrecto, setNombreIncorrecto] = useState("");
     const [apellidosIncorrecto, setApellidosIncorrecto] = useState("");
     const [emailIncorrecto, setEmailIncorrecto] = useState("");
     const [sexoIncorrecto, setSexoIncorrecto] = useState("");
     const [mensajeIncorrecto, setMensajeIncorrecto] = useState("");
-    const [terminosIncorrecto, setTerminosIncorrecto] = useState("");
 
     const [cssClass, setCssClass] = useState("input-valid");
     const [cssClassName, setCssClassName] = useState("input-valid");
@@ -22,9 +20,25 @@ function Formulario() {
     const [cssClassEmail, setCssClassEmail] = useState("input-valid");
     const [cssClassSexo, setCssClassSexo] = useState("input-valid");
     const [cssClassMensaje, setCssClassMensaje] = useState("input-valid");
-    const [cssClassTerminos, setCssClassTerminos] = useState("input-valid");
 
+    const url = "http://localhost:5000/users"
 
+    const data = {
+        name: {enteredName},
+        apellidos: {enteredApellidos},
+        email: {enteredEmail},
+        sexo: {enteredSexo},
+        mensaje: {enteredMensaje},
+    }
+    
+    async function fetchPost(url){
+        await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data), //convierte JS en JSON
+        headers: {
+        "Content-Type": "application/json",
+        },
+        })}
 
     function updateName(event){
         setEnteredName(event.target.value);
@@ -41,54 +55,47 @@ function Formulario() {
     function updateMensaje(event){
         setEnteredMensaje(event.target.value);
     }
-    function updateTerminos(event){
-        setEnteredTerminos(event.target.value);
-    }
     
     const validateTodo = useCallback(
         function() {
-            let checkboxTerminos = document.getElementById("checkboxTerminos");
-            if(enteredName===""||enteredName.length>10||enteredApellidos===""||enteredApellidos.length>20||!enteredEmail.includes("@")||enteredEmail.length>20||enteredSexo===""||enteredMensaje.length>500||checkboxTerminos.checked === false){
+            if(enteredName===""||enteredName.length>10){
+                setNombreIncorrecto(<p>El nombre no es válido, No debe estar vacio ni tener más de 10 carácteres</p>)
+                setCssClassName("input-invalid")
+            }else{
+                setNombreIncorrecto(<span></span>)
+                setCssClassName("input-valid")
+            }
+            if(enteredApellidos===""||enteredApellidos.length>20){
+                setApellidosIncorrecto(<p>Los apellidos no son válidos, No debe estar vacio ni tener más de 20 carácteres</p>)
+                setCssClassApellidos("input-invalid")
+            }else{
+                setApellidosIncorrecto(<span></span>)
+                setCssClassApellidos("input-valid")
+            }
+            if(!enteredEmail.includes("@")||enteredEmail.length>20){
+                setEmailIncorrecto(<p>El email no es válido, debe incluir un @</p>)
+                setCssClassEmail("input-invalid")
+            }else{
+                setEmailIncorrecto(<span></span>)
+                setCssClassEmail("input-valid")
+            }
+            if(enteredSexo===""){
+                setSexoIncorrecto(<p>Seleccione un sexo</p>)
+                setCssClassSexo("input-invalid")
+            }
+            if(enteredMensaje.length>500){
+                setMensajeIncorrecto(<p>Mensaje demasiado largo</p>)
+                setCssClassMensaje("input-invalid")
+            }else{
+                setMensajeIncorrecto(<span>Cáracteres restantes: {500-enteredMensaje.length}</span>)
+            }
+            if(enteredName===""||enteredName.length>10||enteredApellidos===""||enteredApellidos.length>20||!enteredEmail.includes("@")||enteredEmail.length>20||enteredSexo===""||enteredMensaje.length>500){
                 setCssClass("input-invalid")
-                if(enteredName===""||enteredName.length>10){
-                    setNombreIncorrecto(<p>El nombre no es válido, No debe estar vacio ni tener más de 10 carácteres</p>)
-                    setCssClassName("input-invalid")
-                }else{
-                    setNombreIncorrecto(<span></span>)
-                    setCssClassName("input-valid")
-                }
-                if(enteredApellidos===""||enteredApellidos.length>20){
-                    setApellidosIncorrecto(<p>Los apellidos no son válidos, No debe estar vacio ni tener más de 20 carácteres</p>)
-                    setCssClassApellidos("input-invalid")
-                }else{
-                    setApellidosIncorrecto(<span></span>)
-                    setCssClassApellidos("input-valid")
-                }
-                if(!enteredEmail.includes("@")||enteredEmail.length>20){
-                    setEmailIncorrecto(<p>El email no es válido, debe incluir un @</p>)
-                    setCssClassEmail("input-invalid")
-                }else{
-                    setEmailIncorrecto(<span></span>)
-                    setCssClassEmail("input-valid")
-                }
-                if(enteredSexo===""){
-                    setSexoIncorrecto(<p>Seleccione un sexo</p>)
-                    setCssClassSexo("input-invalid")
-                }
-                if(enteredMensaje.length>500){
-                    setMensajeIncorrecto(<p>Mensaje demasiado largo</p>)
-                    setCssClassMensaje("input-invalid")
-                }
-                if(checkboxTerminos.checked === false){
-                    setTerminosIncorrecto(<p>Tienes que aceptar los terminos y condiciones</p>)
-                    setCssClassTerminos("input-invalid")
-                }
             }else{
                 setCssClass("input-valid")
-                setTerminosIncorrecto(<span></span>)
             }
         },
-        [enteredName,enteredApellidos,enteredEmail,enteredSexo,enteredMensaje,enteredTerminos]
+        [enteredName,enteredApellidos,enteredEmail,enteredSexo,enteredMensaje]
     )
 
 
@@ -102,6 +109,11 @@ function Formulario() {
     const handleSubmit = (e) => {
         e.preventDefault();
     }
+    
+    useEffect(function(){
+            fetchPost(url)
+        },
+        []);
 
     return(
         <form onSubmit = {handleSubmit}>
@@ -128,12 +140,11 @@ function Formulario() {
                 {sexoIncorrecto}
                 <p></p>
                 <label>Mensaje </label>
-                <input className={cssClassMensaje} type="mensaje" onChange={updateMensaje}/>
+                <textarea className={cssClassMensaje} type="mensaje" onChange={updateMensaje}/>
                 {mensajeIncorrecto}
                 <p></p>
                 <label>Acepto los Términos y Condiciones </label>
-                <input className={cssClassTerminos} type="checkbox" id="checkboxTerminos" onChange={updateTerminos}/>
-                {terminosIncorrecto}
+                <input  type="checkbox" id="checkboxTerminos"/>
             </div>
             <button className={cssClass} type = 'submit'>Click to submit</button>
         </form>
