@@ -14,6 +14,8 @@ function Formulario() {
     const [sexoIncorrecto, setSexoIncorrecto] = useState("");
     const [mensajeIncorrecto, setMensajeIncorrecto] = useState("");
 
+    const [enviadoCorrectamente, setEnviadoCorrectamente] = useState("");
+
     const [cssClass, setCssClass] = useState("input-valid");
     const [cssClassName, setCssClassName] = useState("input-valid");
     const [cssClassApellidos, setCssClassApellidos] = useState("input-valid");
@@ -24,11 +26,11 @@ function Formulario() {
     const url = "http://localhost:5000/users"
 
     const data = {
-        name: {enteredName},
-        apellidos: {enteredApellidos},
-        email: {enteredEmail},
-        sexo: {enteredSexo},
-        mensaje: {enteredMensaje},
+        name: enteredName,
+        apellidos: enteredApellidos,
+        email: enteredEmail,
+        sexo: enteredSexo,
+        mensaje: enteredMensaje,
     }
     
     async function fetchPost(url){
@@ -91,8 +93,10 @@ function Formulario() {
             }
             if(enteredName===""||enteredName.length>10||enteredApellidos===""||enteredApellidos.length>20||!enteredEmail.includes("@")||enteredEmail.length>20||enteredSexo===""||enteredMensaje.length>500){
                 setCssClass("input-invalid")
+                document.getElementById('buttonEnviar').disabled = true;
             }else{
                 setCssClass("input-valid")
+                document.getElementById('buttonEnviar').disabled = false;
             }
         },
         [enteredName,enteredApellidos,enteredEmail,enteredSexo,enteredMensaje]
@@ -106,17 +110,13 @@ function Formulario() {
         [validateTodo]
     );
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = () => {
+        setEnviadoCorrectamente(<h1>Formulario enviado correctamente</h1>)
+        fetchPost(url);
     }
-    
-    useEffect(function(){
-            fetchPost(url)
-        },
-        []);
 
     return(
-        <form onSubmit = {handleSubmit}>
+        <form>
             <div>
             <h1>Formulario DAM2</h1>
                 <label>Nombre </label>
@@ -146,7 +146,8 @@ function Formulario() {
                 <label>Acepto los Términos y Condiciones </label>
                 <input  type="checkbox" id="checkboxTerminos"/>
             </div>
-            <button className={cssClass} type = 'submit'>Click to submit</button>
+            <button className={cssClass} type = 'submit' onClick={handleSubmit} id="buttonEnviar">Click to submit</button>
+            {enviadoCorrectamente}
         </form>
     );
 }
