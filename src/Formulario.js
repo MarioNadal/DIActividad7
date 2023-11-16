@@ -5,7 +5,7 @@ function Formulario() {
     const [enteredName, setEnteredName] = useState('');
     const [enteredApellidos, setEnteredApellidos] = useState('');
     const [enteredEmail, setEnteredEmail] = useState(' ');
-    const [enteredSexo, setEnteredSexo] = useState(' ');
+    const [enteredSexo, setEnteredSexo] = useState('');
     const [enteredMensaje, setEnteredMensaje] = useState('');
 
     const [nombreIncorrecto, setNombreIncorrecto] = useState("");
@@ -13,8 +13,6 @@ function Formulario() {
     const [emailIncorrecto, setEmailIncorrecto] = useState("");
     const [sexoIncorrecto, setSexoIncorrecto] = useState("");
     const [mensajeIncorrecto, setMensajeIncorrecto] = useState("");
-
-    const [enviadoCorrectamente, setEnviadoCorrectamente] = useState("");
 
     const [cssClass, setCssClass] = useState("input-valid");
     const [cssClassName, setCssClassName] = useState("input-valid");
@@ -84,12 +82,15 @@ function Formulario() {
             if(enteredSexo===""){
                 setSexoIncorrecto(<p>Seleccione un sexo</p>)
                 setCssClassSexo("input-invalid")
+            }else{
+                setSexoIncorrecto(<span></span>)
+                setCssClassSexo("input-valid")
             }
             if(enteredMensaje.length>500){
                 setMensajeIncorrecto(<p>Mensaje demasiado largo</p>)
                 setCssClassMensaje("input-invalid")
             }else{
-                setMensajeIncorrecto(<span>Cáracteres restantes: {500-enteredMensaje.length}</span>)
+                setMensajeIncorrecto(<span> Cáracteres restantes: {500-enteredMensaje.length}</span>)
             }
             if(enteredName===""||enteredName.length>10||enteredApellidos===""||enteredApellidos.length>20||!enteredEmail.includes("@")||enteredEmail.length>20||enteredSexo===""||enteredMensaje.length>500){
                 setCssClass("input-invalid")
@@ -111,12 +112,12 @@ function Formulario() {
     );
 
     const handleSubmit = () => {
-        setEnviadoCorrectamente(<h1>Formulario enviado correctamente</h1>)
+        alert("Formulario enviado correctamente")
         fetchPost(url);
     }
 
     return(
-        <form>
+        <form className="form">
             <div>
             <h1>Formulario DAM2</h1>
                 <label>Nombre </label>
@@ -133,7 +134,8 @@ function Formulario() {
                 <p></p>
                 <label>Sexo </label>
                 <select className={cssClassSexo} type="sexo" onChange={updateSexo}>
-                    <option defaultValue="No binario">No binario</option>
+                    <option value=""></option>
+                    <option value="No binario">No binario</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
                 </select>
@@ -146,8 +148,9 @@ function Formulario() {
                 <label>Acepto los Términos y Condiciones </label>
                 <input  type="checkbox" id="checkboxTerminos"/>
             </div>
+            <p></p>
             <button className={cssClass} type = 'submit' onClick={handleSubmit} id="buttonEnviar">Click to submit</button>
-            {enviadoCorrectamente}
+            <p></p>
         </form>
     );
 }
